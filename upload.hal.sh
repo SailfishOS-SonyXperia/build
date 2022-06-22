@@ -75,6 +75,8 @@ while getopts hkd:m:p:P: arg ; do
     esac
 done
 
+obs_default_opts="-A $obs_api_url"
+
 shift $(( $OPTIND - 1 ))
 
 if [ -d "$obs_project" ] ; then
