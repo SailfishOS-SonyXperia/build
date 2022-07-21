@@ -4,3 +4,33 @@
 * Intro
 
   This repository contains scripts used during repository management.
+
+  The idea behind this scripts is to build drod-hal and related packages
+  on the obs and thus in a clean reproduceable way.
+
+  However the target obs might not be powerful enough to build such packages
+  that need droid-src (Android sources) to build.
+
+  These scripts workaround such issues.
+  Each section explains each type of scripts to avoid such issues.
+
+* obs_localbuild and obs_localbuild_dhd
+
+  The idea behind these scripts is to build expensive packags such as droid-hal
+  on a powerful host machine using /osc/ and /obs-build/.
+
+  After doing so then upload such packages in  the real project on the target obs.
+
+
+  First we have our obs project structure:
+  - <path-project>:$vendor:$device :: This is the real project that contains all
+    packages we build locally and all the packages that can be build on the obs.
+  - <path-project>:$vendor:$device:dhd :: The project that only contains the packages
+    which are build locally and then uploaded to /<path-project>:$vendor:$device//
+
+  The process behind it works like this:
+  1. First build droid-src, move the package to the package cache.
+  2. Build droid-hal from /project/:dhd then upload the resulting rpm to project.
+
+  obs_localbuild and obs_localbuild_dhd do this the same way except that
+  obs_localbuild_dhd the shadow :dhd project into account.
