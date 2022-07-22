@@ -34,3 +34,7 @@
 
   obs_localbuild and obs_localbuild_dhd do this the same way except that
   obs_localbuild_dhd the shadow :dhd project into account.
+
+* droid-prjconf-sync
+  If your target obs can't set the project configuration from prjconf packages then
+  droid-prjconf-sync can build the prjconf package and write the changes by hand.
