@@ -38,3 +38,13 @@
 * droid-prjconf-sync
   If your target obs can't set the project configuration from prjconf packages then
   droid-prjconf-sync can build the prjconf package and write the changes by hand.
+
+* Dependencies
+
+  + ~git~ :: For tar_git and droid-prjconf-sync
+  + ~rpm~ :: ~rpmspec~ to parse the spec files we build
+  + ~osc~ :: To talk to the obs and upload packages
+  + ~obs-build~ :: To do local obs-builds
+  + ~obs-service-tar_git~ :: To obs tar_git service to fetch package sources
+  + ~obs-service-repo~  :: To fetch package sources that use git-repo manifests like in
+    /droid-src/.
