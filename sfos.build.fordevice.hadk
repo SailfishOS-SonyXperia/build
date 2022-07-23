@@ -1,0 +1,29 @@
+# -*- sh -*-
+
+depend $VENDOR.$FAMILY.devices.hadk
+
+host()
+{
+    local device
+    tmp_unit=$PWD/$VENDOR.$FAMILY.$TARGET_UNIT
+
+    for device in $SUPPORTED_DEVICES ; do
+        cat > $tmp_unit <<EOF
+#Ignore any depends calls from env
+$(grep -vE '^depend ' $HOME/.cache/$appname-$$/env.hadk)
+# Don't execute any chainload for now
+var chainload/dry_run=t
+
+depend $VENDOR.$device.hadk
+
+# Only start execute chainloads now
+unvar chainload/dry_run
+
+#depend sfos.sdk.device_target.hadk
+depend $VENDOR.$FAMILY.devices.hadk
+depend $TARGET_UNIT
+EOF
+
+        hadk.build -f $tmp_unit
+    done
+}
