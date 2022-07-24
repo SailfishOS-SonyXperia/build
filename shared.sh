@@ -18,11 +18,16 @@ die() {
     exit 1
 }
 
+osc_parse_define()
+{
+    osc meta prjconf|grep "define $1"| cut -d ' ' -f3
+}
+
 osc_parse_env()
 # Parse the %device variable from the prjconf so we now which droid-src package
 # we build for.
 {
-    local device=$(osc meta prjconf|grep 'define device'| cut -d ' ' -f3)
+    local device=$(osc_parse_define "$device")
     vendor=$(echo $device| cut -d '-' -f1)
     family=$(echo $device| cut -d '-' -f2)
 
