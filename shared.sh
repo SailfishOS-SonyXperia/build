@@ -18,11 +18,22 @@ die() {
     exit 1
 }
 
+osc_parse_define()
+{
+    local output
+    output="$(osc meta prjconf ${OSC_PRJ} |grep "define $1"| sed -e "s/%define\ *$1\ *//"| sed -e 's/^"//' | sed -e 's/"$//')"
+    if [ -z "$output" ] ; then
+        error "\$$1 can't be empty, please define inside your prjconf"
+        exit 1
+    fi
+    echo "$output"
+}
+
 osc_parse_env()
 # Parse the %device variable from the prjconf so we now which droid-src package
 # we build for.
 {
-    local device=$(osc meta prjconf ${OSC_PRJ} |grep 'define device'| cut -d ' ' -f3)
+    local device=$(osc_parse_define "device")
     vendor=$(echo $device| cut -d '-' -f1)
     family=$(echo $device| cut -d '-' -f2)
 
