@@ -39,6 +39,26 @@
   If your target obs can't set the project configuration from prjconf packages then
   droid-prjconf-sync can build the prjconf package and write the changes by hand.
 
+
+** HADK-Tools based scripts
+   For some of our scripts we require [[https://github.com/SailfishOS-SonyXperia/hadk_tools][HADK-Tools]] and the platform SDK to be setup.
+
+** Setup
+   To setup install hadk-tools into your local ~~/.local~ folder by running
+   ~make install PREFIX=~/.local~ from the hadk_tools folder.
+
+
+   After doing so follow this [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.tools.org#basic-setup][document]] till the end.
+
+** hadk.tool.droid_system.sh
+
+   Build droid-system using local build environment that has been setup.
+
+   Requires that the local Android source env has been setup either manually or using [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.source.org][hadk_source]].
+
+   After the Android environment  has been setup just call it with  your obs project passed as -P.
+
+
 * Dependencies
 
   + ~git~ :: For tar_git and droid-prjconf-sync
@@ -48,3 +68,4 @@
   + ~obs-service-tar_git~ :: To obs tar_git service to fetch package sources
   + ~obs-service-repo~  :: To fetch package sources that use git-repo manifests like in
     /droid-src/.
+  + ~hadk_tools~ and Platform SDK :: To build droid-system
