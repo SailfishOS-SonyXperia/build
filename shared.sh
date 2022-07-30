@@ -1,3 +1,4 @@
+# -*- bash -*-
 # Default directories
 # Override at least obs_build_rootdir if needed
 
