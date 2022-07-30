@@ -44,8 +44,8 @@
    For some of our scripts we require [[https://github.com/SailfishOS-SonyXperia/hadk_tools][HADK-Tools]] and the platform SDK to be setup.
 
 ** Setup
-   To setup install hadk-tools into your local ~~/.local~ folder by running
-   ~make install PREFIX=~/.local~ from the hadk_tools folder.
+   To setup install hadk-tools into your local ~$HOME/.local~ folder by running
+   ~make install PREFIX=$HOME/.local~ from the hadk_tools folder.
 
 
    After doing so follow this [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.tools.org#basic-setup][document]] till the end.
@@ -57,6 +57,10 @@
    Requires that the local Android source env has been setup either manually or using [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.source.org][hadk_source]].
 
    After the Android environment  has been setup just call it with  your obs project passed as -P.
+
+** hadk_tools.mkimage.sh
+
+   Create install images for each device supported by the OBS project that is passed as -P.
 
 
 * Dependencies

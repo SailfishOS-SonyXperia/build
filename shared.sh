@@ -113,6 +113,14 @@ obs_checkout_prj_pkg() {
     )
 }
 
+osc_repo_baseurl() {
+    local repofile_url
+    for repofile_url in $(osc repourls "${1+$1}") ; do
+        # We only want the first result
+        break
+    done
+    curl --silent "$repofile_url"|grep baseurl| cut -d'=' -f2
+}
 
 gen_build_script() {
     cat > build.script <<EOF
