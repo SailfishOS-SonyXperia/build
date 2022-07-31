@@ -73,3 +73,17 @@
   + ~obs-service-repo~  :: To fetch package sources that use git-repo manifests like in
     /droid-src/.
   + ~hadk_tools~ and Platform SDK :: To build droid-system
+
+* OBS Project configuration
+  These scripts require some variables present in the OBS project configuration in
+  addition to the usual content.
+
+  Each of those are defined by using ~%define var content~ as explained in
+  [[https://en.opensuse.org/openSUSE:Build_Service_prjconf#Macros][openSUSE:Build Service prjconf#Macros]].
+
+  + device :: Set as the vendor of the device and the device family as <vendor>-<family>.
+    Set by droid-prjconf-sync if used.
+  + supported_devices :: All devices supported by the project listed in their variant names.
+    These should be set as "first second" and so on.
+
+    One example for e.g. the Xperia 1/5 would be ~%define supported_devices "j8110 j9110 j8210 j9210\"~ .
