@@ -54,7 +54,6 @@ SRC_GENERIC=$SUBMODULE/$CONFDIR
 SRC_SPECIFIC=$CONFDIR
 DEST=$obs_project/prjconf_upload.xml
 
-mkdir -p $DESTDIR
 
 if grep -q "^Macros:" $SRC_GENERIC/prjconf.xml $SRC_SPECIFIC/prjconf.xml; then
     echo "prjconf.xml must not contain Macros section. Put them to macros.xml"
