@@ -2,8 +2,8 @@
 # Default directories
 # Override at least obs_build_rootdir if needed
 
-obs_api_url="https://build.sailfishos.org"
-obs_default_opts="-A $obs_api_url"
+obs_api_url="https://build.merproject.org"
+osc_opts=(-A "$obs_api_url")
 
 obs_build_rootdir=/srv/build/buildservice
 obs_cache_dir=${obs_build_rootdir}/cache
@@ -17,6 +17,11 @@ error() {
 die() {
     error "$@"
     exit 1
+}
+
+osc() {
+    command osc \
+            "${osc_opts[@]}" "${@}"
 }
 
 osc_parse_define()
@@ -82,7 +87,12 @@ obs_checkout_prj() {
     local obs_project="$1"
 
     if [ ! -d "$obs_project" ] ; then
-        osc $obs_default_opts co "$obs_project"
+        osc co "$obs_project"
+    else
+        (
+            cd "$obs_project" || exit $?
+            osc up
+        )
     fi
 }
 
@@ -95,10 +105,10 @@ obs_checkout_prj_pkg() {
         cd "$obs_project" || exit $?
 
         if [ ! -e "$obs_package" ] ; then
-            osc $obs_default_opts co "$obs_package"
+            osc co "$obs_package"
         else
             cd "$obs_package" || exit $?
-            osc $obs_default_opts up
+            osc up
         fi
     )
 }

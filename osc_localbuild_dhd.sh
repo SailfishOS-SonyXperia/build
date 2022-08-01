@@ -67,7 +67,7 @@ for rpm in "../../$obs_project:dhd/$obs_package/"*.rpm ; do
         7z a -v750m "$rpm.7z" "$rpm"
     fi
     mv "$rpm" .
-    osc $obs_default_opts add $(basename $rpm)*
+    osc add $(basename $rpm)*
 done
 
 gen_build_script
@@ -79,7 +79,7 @@ osc add pkg_meta
 gen_build_script_stub_spec
 osc add $pkg.spec
 
-osc $obs_default_opts \
+osc \
     commit \
     --skip-local-service-run \
     -m"Run osc build as of $start_date"
