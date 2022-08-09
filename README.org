@@ -56,11 +56,15 @@
 
    Requires that the local Android source env has been setup either manually or using [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.source.org][hadk_source]].
 
-   After the Android environment  has been setup just call it with  your obs project passed as -P.
+   After the Android environment  has been setup just call it with your obs project passed as -P
+   and -t to tell the script where you HADK templates are.
 
 ** hadk_tools.mkimage.sh
 
-   Create install images for each device supported by the OBS project that is passed as -P.
+   Create install images for each device supported by the OBS project that is passed as -P
+   and -t to tell the script where you HADK templates are.
+   Also you to pass your obs project stores your ssu configuration as -S and the package
+   that pulls in such configs as -E.
 
 
 * Dependencies
