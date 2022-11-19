@@ -64,7 +64,7 @@ osc_build() {
     osc build --root=$obs_build_root --no-verify \
         "${@}" \
         -x p7zip -x bzip2 \
-        --keep-pkgs="$PWD" \
+        --keep-pkgs="${obs_build_to_cache:-$PWD}" \
         --prefer-pkgs=$osc_build_cache_pkgs \
         --no-service \
         --trust-all-projects  \
