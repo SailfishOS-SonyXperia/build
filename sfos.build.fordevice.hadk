@@ -10,7 +10,9 @@ host()
     for device in $SUPPORTED_DEVICES ; do
         cat > $tmp_unit <<EOF
 #Ignore any depends calls from env
-$(grep -vE '^depend ' $HOME/.cache/$appname-$$/env.hadk)
+# Try to catch if XDG_CACHE_HOME was set
+XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+$(grep -vE '^depend ' ${XDG_CACHE_HOME:-$HOME/.cache}/$appname-$$/env.hadk)
 # Don't execute any chainload for now
 var chainload/dry_run=t
 
