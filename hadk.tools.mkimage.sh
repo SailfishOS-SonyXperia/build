@@ -10,6 +10,13 @@ scriptdir="$(dirname -- "$( readlink -f -- "$0"; )")"
 usage_description="Fetch device we build for from obs_project and use hadk_tools to build image for each supported devices, requires that plaform SDK has been setup"
 TARGET_UNIT=mk.image.hadk
 
+usage_options() {
+    cat <<EOF
+-S      Obs project that contains SSu config
+-E      Extra packages to install such as additional features
+EOF
+}
+
 while getopts hr:b:P:p:A:t:S:E: arg ; do
     case $arg in
         P) obs_project=$OPTARG;;

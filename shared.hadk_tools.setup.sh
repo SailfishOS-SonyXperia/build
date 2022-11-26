@@ -49,7 +49,10 @@ options:
 -t      Path to the directory containing your device templates
 
 -A      API url to the target obs, defaults to $obs_api_url
-
+EOF
+    # Call usage options to list any script specific options
+    usage_options
+    cat <<EOF
 -h      Show this help
 
 EOF
