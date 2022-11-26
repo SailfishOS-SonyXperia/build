@@ -119,7 +119,7 @@ osc_repo_baseurl() {
         # We only want the first result
         break
     done
-    curl --silent "$repofile_url"|grep baseurl| cut -d'=' -f2
+    curl --netrc-optional --silent "$repofile_url"|grep baseurl| cut -d'=' -f2
 }
 
 gen_build_script() {
