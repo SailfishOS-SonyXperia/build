@@ -2,7 +2,7 @@
 
 osc_hadk_setup_supported_devices()
 {
-    SUPPORTED_DEVICES=$(osc_parse_define "supported_devices")
+    SUPPORTED_DEVICES=${1:-$(osc_parse_define "supported_devices")}
 
     cat > "$tmp_dir"/$vendor.$family.devices.hadk <<EOF
 FAMILY=$family
