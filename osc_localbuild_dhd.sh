@@ -57,17 +57,17 @@ fi
 
 
 
-SIZE_1G_IN_B=$(echo 1G |numfmt --from si)
 
 cd $obs_project/$obs_package || exit 1
 
 
 for rpm in "../../$obs_project:dhd/$obs_package/"*.rpm ; do
-    if [ "$(stat -c '%s' $rpm)" -ge $SIZE_1G_IN_B ] ; then
-        7z a -v750m "$rpm.7z" "$rpm"
-    fi
-    mv "$rpm" .
-    osc add $(basename $rpm)*
+    case $rpm in
+        *.src.rpm) : ;; # Ignore source packages
+        *)  mv "$rpm" .
+            osc add "$(basename $rpm)"
+            ;;
+    esac
 done
 
 gen_build_script

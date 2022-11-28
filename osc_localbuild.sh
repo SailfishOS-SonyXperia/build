@@ -59,10 +59,12 @@ if [ $upload ] ; then
     SIZE_1G_IN_B=$(echo 1G |numfmt --from si)
 
     for rpm in $obs_project/$obs_package/*.rpm ; do
-        if [ "$(stat -c '%s' $rpm)" -ge $SIZE_1G_IN_B ] ; then
-            7z a -v750m "$rpm.7z" "$rpm"
-        fi
-        osc add $rpm*
+        case $rpm in
+            *.src.rpm) : ;; # Ignore source packages
+            *)  mv "$rpm" .
+                osc add "$(basename $rpm)"
+                ;;
+        esac
     done
 
 
