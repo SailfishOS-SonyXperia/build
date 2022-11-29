@@ -14,7 +14,7 @@
   These scripts workaround such issues.
   Each section explains each type of scripts to avoid such issues.
 
-* obs_localbuild and obs_localbuild_dhd
+* obs_localbuild, obs_localbuild_dhd and osc_localbuild_dhd_droid_src
 
   The idea behind these scripts is to build expensive packags such as droid-hal
   on a powerful host machine using /osc/ and /obs-build/.
@@ -31,6 +31,9 @@
   The process behind it works like this:
   1. First build droid-src, move the package to the package cache.
   2. Build droid-hal from /project/:dhd then upload the resulting rpm to project.
+
+  obs_local_build_dhd_droid_src can be used to build droid-src and move it to
+  the cache without specifying the package name.
 
   obs_localbuild and obs_localbuild_dhd do this the same way except that
   obs_localbuild_dhd the shadow :dhd project into account.
