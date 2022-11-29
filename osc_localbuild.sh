@@ -12,14 +12,16 @@ usage_description="Build package in project"
 usage_options() {
     cat <<EOF
 -U      Also upload build package
+-C      Keep build packages in cache pkg cache directory
 EOF
 }
 
-while getopts hr:b:P:p:A:U arg ; do
+while getopts hr:b:P:p:A:UC arg ; do
     case $arg in
         P) obs_project=$OPTARG;;
         p) obs_package=$OPTARG;;
         A) obs_api_url=$OPTARG;;
+        C) obs_build_to_cache="${osc_build_cache_pkgs}";;
         U) upload=t;;
         h) usage; exit 0;;
         ?|*) usage; exit 1;;
@@ -57,10 +59,12 @@ if [ $upload ] ; then
     SIZE_1G_IN_B=$(echo 1G |numfmt --from si)
 
     for rpm in $obs_project/$obs_package/*.rpm ; do
-        if [ "$(stat -c '%s' $rpm)" -ge $SIZE_1G_IN_B ] ; then
-            7z a -v750m "$rpm.7z" "$rpm"
-        fi
-        osc add $rpm*
+        case $rpm in
+            *.src.rpm) : ;; # Ignore source packages
+            *)  mv "$rpm" .
+                osc add "$(basename $rpm)"
+                ;;
+        esac
     done
 
 

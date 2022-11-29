@@ -2,7 +2,7 @@
 
 osc_hadk_setup_supported_devices()
 {
-    SUPPORTED_DEVICES=$(osc_parse_define "supported_devices")
+    SUPPORTED_DEVICES=${1:-$(osc_parse_define "supported_devices")}
 
     cat > "$tmp_dir"/$vendor.$family.devices.hadk <<EOF
 FAMILY=$family
@@ -49,7 +49,10 @@ options:
 -t      Path to the directory containing your device templates
 
 -A      API url to the target obs, defaults to $obs_api_url
-
+EOF
+    # Call usage options to list any script specific options
+    usage_options
+    cat <<EOF
 -h      Show this help
 
 EOF

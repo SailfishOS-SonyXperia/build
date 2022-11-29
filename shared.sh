@@ -64,7 +64,7 @@ osc_build() {
     osc build --root=$obs_build_root --no-verify \
         "${@}" \
         -x p7zip -x bzip2 \
-        --keep-pkgs="$PWD" \
+        --keep-pkgs="${obs_build_to_cache:-$PWD}" \
         --prefer-pkgs=$osc_build_cache_pkgs \
         --no-service \
         --trust-all-projects  \
@@ -116,10 +116,11 @@ obs_checkout_prj_pkg() {
 osc_repo_baseurl() {
     local repofile_url
     for repofile_url in $(osc repourls "${1+$1}") ; do
-        # We only want the first result
-        break
+        case $repofile_url in
+            *${adaptation_repo_arch}*) break ;;
+        esac
     done
-    curl --silent "$repofile_url"|grep baseurl| cut -d'=' -f2
+    curl --netrc-optional --silent "$repofile_url"|grep baseurl| cut -d'=' -f2
 }
 
 gen_build_script() {
