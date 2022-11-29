@@ -60,7 +60,7 @@ if [ $upload ] ; then
         if [ "$(stat -c '%s' $rpm)" -ge $SIZE_1G_IN_B ] ; then
             7z a -v750m "$rpm.7z" "$rpm"
         fi
-        osc $obs_default_opts add $rpm*
+        osc add $rpm*
     done
 
 
@@ -75,7 +75,7 @@ if [ $upload ] ; then
     osc add $obs_package.spec
 
 
-    osc $obs_default_opts \
+    osc \
         commit \
         --skip-local-service-run \
         -m"Run osc build as of $start_date"

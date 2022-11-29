@@ -67,7 +67,7 @@ done
 obs_default_opts="-A $obs_api_url"
 
 if [ ! -e "$obs_project" ] ; then
-    osc $obs_default_opts co "$obs_project"
+    osc co "$obs_project"
 fi
 
 cd "$obs_project" || exit $?
@@ -76,12 +76,12 @@ if [  -e "$obs_package" ] ; then
     die "Package already exists"
 fi
 
-osc $obs_default_opts mkpac "$obs_package"
+osc mkpac "$obs_package"
 
 cd "$obs_package"
 
 create__service "_service"
 
-osc $obs_default_opts add _service
+osc add _service
 
-osc $obs_default_opts commit -m"Added package"
+osc commit -m"Added package"

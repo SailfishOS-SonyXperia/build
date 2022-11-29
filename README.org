@@ -39,6 +39,34 @@
   If your target obs can't set the project configuration from prjconf packages then
   droid-prjconf-sync can build the prjconf package and write the changes by hand.
 
+
+** HADK-Tools based scripts
+   For some of our scripts we require [[https://github.com/SailfishOS-SonyXperia/hadk_tools][HADK-Tools]] and the platform SDK to be setup.
+
+** Setup
+   To setup install hadk-tools into your local ~$HOME/.local~ folder by running
+   ~make install PREFIX=$HOME/.local~ from the hadk_tools folder.
+
+
+   After doing so follow this [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.tools.org#basic-setup][document]] till the end.
+
+** hadk.tool.droid_system.sh
+
+   Build droid-system using local build environment that has been setup.
+
+   Requires that the local Android source env has been setup either manually or using [[https://github.com/SailfishOS-SonyXperia/hadk_tools/blob/master/doc/hadk.source.org][hadk_source]].
+
+   After the Android environment  has been setup just call it with your obs project passed as -P
+   and -t to tell the script where you HADK templates are.
+
+** hadk_tools.mkimage.sh
+
+   Create install images for each device supported by the OBS project that is passed as -P
+   and -t to tell the script where you HADK templates are.
+   Also you to pass your obs project stores your ssu configuration as -S and the package
+   that pulls in such configs as -E.
+
+
 * Dependencies
 
   + ~git~ :: For tar_git and droid-prjconf-sync
@@ -48,3 +76,18 @@
   + ~obs-service-tar_git~ :: To obs tar_git service to fetch package sources
   + ~obs-service-repo~  :: To fetch package sources that use git-repo manifests like in
     /droid-src/.
+  + ~hadk_tools~ and Platform SDK :: To build droid-system
+
+* OBS Project configuration
+  These scripts require some variables present in the OBS project configuration in
+  addition to the usual content.
+
+  Each of those are defined by using ~%define var content~ as explained in
+  [[https://en.opensuse.org/openSUSE:Build_Service_prjconf#Macros][openSUSE:Build Service prjconf#Macros]].
+
+  + device :: Set as the vendor of the device and the device family as <vendor>-<family>.
+    Set by droid-prjconf-sync if used.
+  + supported_devices :: All devices supported by the project listed in their variant names.
+    These should be set as "first second" and so on.
+
+    One example for e.g. the Xperia 1/5 would be ~%define supported_devices "j8110 j9110 j8210 j9210\"~ .

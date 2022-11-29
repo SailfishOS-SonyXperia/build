@@ -1,8 +1,9 @@
+# -*- bash -*-
 # Default directories
 # Override at least obs_build_rootdir if needed
 
-obs_api_url="https://build.sailfishos.org"
-obs_default_opts="-A $obs_api_url"
+obs_api_url="https://build.merproject.org"
+osc_opts=(-A "$obs_api_url")
 
 obs_build_rootdir=/srv/build/buildservice
 obs_cache_dir=${obs_build_rootdir}/cache
@@ -18,16 +19,32 @@ die() {
     exit 1
 }
 
+osc() {
+    command osc \
+            "${osc_opts[@]}" "${@}"
+}
+
+osc_parse_define()
+{
+    local output
+    output="$(osc meta prjconf ${OSC_PRJ} |grep "define $1"| sed -e "s/%define\ *$1\ *//"| sed -e 's/^"//' | sed -e 's/"$//')"
+    if [ -z "$output" ] ; then
+        error "\$$1 can't be empty, please define inside your prjconf"
+        exit 1
+    fi
+    echo "$output"
+}
+
 osc_parse_env()
 # Parse the %device variable from the prjconf so we now which droid-src package
 # we build for.
 {
-    local device=$(osc meta prjconf|grep 'define device'| cut -d ' ' -f3)
+    local device=$(osc_parse_define "device")
     vendor=$(echo $device| cut -d '-' -f1)
     family=$(echo $device| cut -d '-' -f2)
 
     # Detect the arch for the of the adaptation repo from device_rpm_architecture_string
-    adaptation_repo_arch=$(osc meta prjconf|grep device_rpm_architecture_string |
+    adaptation_repo_arch=$(osc meta prjconf ${OSC_PRJ} |grep device_rpm_architecture_string |
                            cut -d ' ' -f2)
 }
 
@@ -70,7 +87,12 @@ obs_checkout_prj() {
     local obs_project="$1"
 
     if [ ! -d "$obs_project" ] ; then
-        osc $obs_default_opts co "$obs_project"
+        osc co "$obs_project"
+    else
+        (
+            cd "$obs_project" || exit $?
+            osc up
+        )
     fi
 }
 
@@ -83,14 +105,22 @@ obs_checkout_prj_pkg() {
         cd "$obs_project" || exit $?
 
         if [ ! -e "$obs_package" ] ; then
-            osc $obs_default_opts co "$obs_package"
+            osc co "$obs_package"
         else
             cd "$obs_package" || exit $?
-            osc $obs_default_opts up
+            osc up
         fi
     )
 }
 
+osc_repo_baseurl() {
+    local repofile_url
+    for repofile_url in $(osc repourls "${1+$1}") ; do
+        # We only want the first result
+        break
+    done
+    curl --silent "$repofile_url"|grep baseurl| cut -d'=' -f2
+}
 
 gen_build_script() {
     cat > build.script <<EOF
