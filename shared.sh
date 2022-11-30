@@ -3,12 +3,17 @@
 # Override at least obs_build_rootdir if needed
 
 obs_api_url="https://build.merproject.org"
-osc_opts=(-A "$obs_api_url")
+osc_opts=()
 
 obs_build_rootdir=/srv/build/buildservice
 obs_cache_dir=${obs_build_rootdir}/cache
 obs_build_root=${obs_build_rootdir}/buildroot
 osc_build_cache_pkgs=${obs_cache_dir}/pkgs
+
+export LANG=en_US.utf8
+export LC_CTYPE="en_US.utf8"
+export LC_ALL=
+export GREP_COLORS=never
 
 error() {
     echo "$@" >&2
@@ -21,7 +26,7 @@ die() {
 
 osc() {
     command osc \
-            "${osc_opts[@]}" "${@}"
+            "${osc_opts[@]}" -A "${obs_api_url}" "${@}"
 }
 
 osc_parse_define()
