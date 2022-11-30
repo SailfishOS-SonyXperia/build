@@ -1,0 +1,206 @@
+#+TITLE: Releasing Process Documentation
+
+* Brief description about the releasing process
+
+  The releasing process of these ports follows a similar structure to the one that
+  Sailfish OS has.
+
+  A release is developed, tested  and than branched of into a new release.
+  Each release has it's on repositories separated from each other.
+
+  The release process is usually started directly after a new public
+  release for Sailfish OS has been released or if possible already started
+  earlier if possible by following the state of the related port if it exists.
+
+
+* Create a new story for the release
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 01:1]
+  :END:
+
+  Create a new story for the release, use an existing release story
+  as a template.
+
+
+* Branching of a new release
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 00:40]
+  :END:
+
+  After the initial testing run ~osc_release_branch.sh~ like this:
+  #+begin_src sh
+  ./osc_release_branch.sh -P <source_project> -T <target_project> -R <new release>
+  #+end_src
+
+* Final testing for the release
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 00:4]
+  :ID:       1e1f4bf2-1ac3-45cc-8fa8-12b01b6c2d72
+  :END:
+
+  After the release has been branched of create a new release image to test it.
+  Run ~hadk.tools.mkimage.sh~ with the repository you just branched of, install
+  the image to your device and run CSD.
+
+  To start CSD please follow this link:
+  [[https://jolla.zendesk.com/hc/en-us/articles/201441067-CSD-tool-for-customer-service-diagnostic][CSD tool for customer service diagnostic – Jolla Service and Support]]
+
+  Select run continuous testing to run all tests and follow the instructions
+  until the tests are done.
+
+  Write down all the known issues that can't be fixed right now by creating a bug
+  for each.
+
+  If all tests have passed that can pass right now continue to the next step.
+
+  In case there are issues try to work on the specific issue and repeat the tests that
+  have failed.
+  Try to write descriptive bug reports and report to upstream if needed.
+
+  # FIXME Add description on how to report bugs to Jolla. SailfishOS docs?
+
+* Generating the release changelog
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 00:4]
+  :END:
+
+  # WIP
+  # Follow for progress: https://github.com/SailfishOS-SonyXperia/bugs/issues/34
+
+  Run dnf repodiff like this:
+  #+begin_src sh
+  export LANGUAGE=en_GB.UTF-8
+  export LC_ALL=en_GB.UTF-8
+
+  dnf repodiff \
+      --repofrompath=n,https://repo.sailfishos.org/obs/nemo:/testing:/hw:/sony:/kumano:/$release/latest_aarch64 \
+      --repofrompath=o,https://repo.sailfishos.org/obs/nemo:/testing:/hw:/sony:/kumano:/$oldrelease \
+      --repo-old=o \
+      --repo-new=n \
+      --arch=aarch64 \
+      --hide-author \
+      Changelog.md
+  #+end_src
+  Replace old release with the last release and new release with the release you just tested.
+
+* Create a bug for the known issues of the new release
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 01:2]
+  :END:
+
+  Create a new bug for the known issues for this release that can't be fixed right now.
+
+  Check the post of the previous release for known issues that haven't been fixed
+  and copy them to the new release post.
+
+
+* Tag a new release and prepare the release changelog
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 00:4]
+  :END:
+
+  Tag a new release in the ~droid-hal-version-$vendor-$family~ repository,
+  e.g. for the Sony Xperia 1/5 -> ~droid-hal-version-sony-kumano~.
+
+  The name of the tag should be ~<SailfishOS-Version>git<release revision>~
+  so for example ~4.4.0.72git1~.
+
+  This tag will be used to identify a new release.
+
+  Create a new draft release by selecting "Draft a new release" in the
+  repository mentioned above.
+
+  Enter the following into the draft:
+  #+begin_src org
+  ,* Sailfish OS 4.4.0.68 for {{{VENDOR}}} {{{DEVICE_NAME_PRETTY}}}
+
+  These release notes cover Sailfish OS {{RELEASE}} for the following devices:
+
+  # Repeat if the device family consists of more than one device
+  # {{{DEVICE_NAME_VARIANTS}}} should be a comma and space
+  # separated list of all devices.
+
+  - {{{DEVICE_NAME_PRETTY}}} ({{{DEVICE_NAME_VARIANTS}}})
+
+  ,* Intro
+
+    {{{INTRO_BRIEF}}}
+
+    # If nessascary adjust the flashing instructions specific to the induvidual adaptation.
+  To install Sailfish OS on your device please follow the install instructs in the flashing-readme.txt file included in the archive or read the offical flashing instructions for either the Xperia 10 II or Xperia 10 III:
+
+      https://jolla.com/sailfishxinstall/
+
+  Just make sure to download the software binaries for your device instead of the ones mentioned in the instructions:
+
+  # Replaced the placeholder below with a link to the oem binaries of the vendor
+  # for example for Xperia 1/5 Kumano:
+  # https://developer.sony.com/file/download/software-binaries-for-aosp-android-10-0-kernel-4-14-kumano-latest
+  {{{OEM_BINARIES_LINK}}}
+
+
+  ,* Known issues
+
+  # Replace list of known issues with the following format of known issue
+  #
+  # + Link with short name of the issue, usually <bugtracker>#<bugnumber>
+  #   as description for the link.
+  #   In case of Forges such as Github organisation/repository#<bugnumber>.
+  #   - Short description of the issue
+  #
+  # Repeat this for all the known issues present.
+
+  {{{LIST_OF_KNOW_ISSUES}}}
+
+  ,* Changelog
+
+    # Add a short note above the changelog if needed for example:
+    # This is the first release for this device, thus the changelog is quite verbose.
+    #
+    # Then paste the contents of Changelog.md into the details section, strip the text
+    # above the first heading.
+
+    <details>
+    {{{Paste changelog here}}}
+    </details>
+
+
+  #+end_src
+
+
+Follow the instructions in the draft and replace the contents accordingly.
+Attach /Changelog.md/ after you are done.
+
+
+* Build a new release
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 00:40]
+  :END:
+
+  Now since you created the release draft it is time to build the final images
+  for all devices.
+
+  Run ~hadk.tools.mkimage.sh~ without specifying the specific device you are building
+  for, let it build for all devices
+
+  After it is done check all the build log, check if all zip archives have the right size.
+  The size should be around 700Mb.
+
+  Now attach each archive created to the draft release you created earlier.
+
+  If everything is alright continue with the next step.
+
+
+* Publish
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 00:50]
+  :END:
+
+  The final step is to publish and lean back :).
+
+  Update each post you publish on with the brief intro to this release,
+  update the known issues and adjust any other links if necessary.
+
+  Change the title of the post to match the current release.
+
+  If everything is done, publish the draft release and spread the news.
