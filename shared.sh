@@ -113,6 +113,25 @@ obs_checkout_prj_pkg() {
     )
 }
 
+osc_pkg_clean_rpms() {
+    local pkg="${1:-$PWD}"
+
+    if [ ! -e "$pkg/.osc/_apiurl" ] ; then
+        return 1
+    fi
+
+    local pkg_name pkg_project
+    read -r pkg_name < "$pkg/.osc/_package"
+    read -r pkg_project < "$pkg/.osc/_project"
+
+    for rpm in $(osc ls $pkg_project $pkg_name) ; do
+        case $rpm in
+            *.rpm) osc rm $rpm ;;
+            *) : ;;
+        esac
+    done
+}
+
 osc_repo_baseurl() {
     local repofile_url
     for repofile_url in $(osc repourls "${1+$1}") ; do
@@ -241,7 +260,7 @@ should_build()
         fi
         (
             cd "$old_pkg_dir" || exit $?
-            osc rm -- *"$old_pkg_ver"*.rpm
+            osc_pkg_clean_rpms
         )
     else
         pkg=$__pkg
