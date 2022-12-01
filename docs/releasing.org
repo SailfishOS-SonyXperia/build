@@ -32,6 +32,22 @@
   ./osc_release_branch.sh -P <source_project> -T <target_project> -R <new release>
   #+end_src
 
+** Caveats when branching of a release
+   :PROPERTIES:
+   :CREATED:  [2022-12-01 Thu 02:10]
+   :END:
+
+   Some caveats have to be taken into account when a new release.
+
+   In case we need a new feature that isn't a in the current Sailfish OS release
+   such as support for new hardware the packages needed have to added to the new branch
+   in case they were not added beforehand to the devel project.
+
+   For some packages special measurements have to be taken:
+   - Packages that depend on droidmedia-devel have to be rebuild if droidmedia is newer
+     than droidmedia-devel in Sailfish OS ([[https://github.com/SailfishOS-SonyXperia/bugs/issues/57][SailfishOS-SonyXperia/bugs#57]]).
+
+
 * Final testing for the release
   :PROPERTIES:
   :CREATED:  [2022-12-01 Thu 00:4]
