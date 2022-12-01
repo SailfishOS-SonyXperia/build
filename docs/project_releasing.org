@@ -1,0 +1,86 @@
+#+TITLE: Project Releasing Process Documentation
+
+* Brief description
+
+  The document describes the releasing process for the components we use
+  in adaptation build process besides the adaptation packages themselves.
+  A good summary would be project updates.
+
+  The components are the are:
+  + Documentation for Releasing, Testing, and building
+  + Build scripts
+  + Releasing and other maintenance scripts
+
+  The goal of this is to track issues that not adaptation specific but come
+  from issues in the documentation or other processes around the adaptations.
+
+  Sometimes these issues are first device specific but usually the affect all ports
+  in the long run.
+
+* Release process
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 14:10]
+  :END:
+
+  There is not really a release update process for these components but frequent updates in
+  between updates for device adaptation as we go.
+
+* Branch of release for tracking
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 22:00]
+  :ID:       d3a28722-541d-4deb-ad10-ed3288310173
+  :END:
+
+  Branch of a release using ~osc_release_branch~, the release should be branched of from the
+  non-versioned repository to a new release that is named after the time you update.
+  E.g. ~date +%d-%m-%Y~.
+
+  The release is only used for tracking project updates, devices always use the non
+  versioned configuration.
+
+  After branching of a new release, delete branches that are older than the last release
+  Thu save space.
+
+* Changelog generation
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 14:20]
+  :END:
+
+    #+begin_src sh
+    export LANGUAGE=en_GB.UTF-8
+    export LC_ALL=en_GB.UTF-8
+
+    dnf repodiff \
+        --repo-old=o --repo-new=n \
+        --hide-author \
+        --arch '*' \
+        --repofrompath=o,https://repo.sailfishos.org/obs/nemo:/testing:/hw:/sony:/kumano:/customers:/sailfishos-sonyxperia/$old_date/latest_aarch64/ \
+        --repofrompath=n,https://repo.sailfishos.org/obs/nemo:/testing:/hw:/sony:/kumano:/customers:/sailfishos-sonyxperia/$date/latest_aarch64/ \
+        | grep -v 'Binaries Added'
+    #+end_src
+
+ Replace ~$old_date~ and ~$date~ with the respective dates.
+
+* Update adaptation posts
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 to 14:20]
+  :END:
+
+  Update the post of each adaptation about the new changes between the new
+  and the old release.
+
+* Update changelog in bugs repository
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 21:50]
+  :END:
+
+  Create a new tag name after the date mentioned [[id:d3a28722-541d-4deb-ad10-ed3288310173][above]], copy the new changelog, write a small
+  summary if needed and press publish.
+
+* Publish
+  :PROPERTIES:
+  :CREATED:  [2022-12-01 Thu 14:20]
+  :END:
+
+  There's no real publishing step here, except forum post updates,
+  but try to highlight infrastructure updates in adaptation updates if relevant.
