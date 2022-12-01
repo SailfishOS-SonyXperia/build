@@ -3,7 +3,8 @@
 
 * Intro
 
-  This repository contains scripts used during repository management.
+  This repository contains scripts used during repository management as well as
+  documentation of the adaptation development.
 
   The idea behind this scripts is to build drod-hal and related packages
   on the obs and thus in a clean reproduceable way.
