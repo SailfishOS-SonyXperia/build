@@ -50,24 +50,31 @@ $usage_description
 
 options:
 
--P      OBS source project
--T      OBS target project to branch to
--R      Target release, should given as major.minor.patch.revision
+-P       OBS source project
+-T       OBS target project to branch to
+-R       Target release, should given as major.minor.patch.revision
+-S <R,S> Skip (R)epository branching or (S)ervice branching
+         Can be passed multiple times.
 
--A      API url to the target obs, defaults to $obs_api_url
+-A       API url to the target obs, defaults to $obs_api_url
 
--h      Show this help
+-h       Show this help
 
 EOF
 }
 
 
-while getopts hr:b:P:p:A:t:R:T: arg ; do
+while getopts hr:b:P:p:A:t:R:T:S: arg ; do
     case $arg in
         P) obs_project=$OPTARG;;
         T) target_obs_project=$OPTARG;;
         A) obs_api_url=$OPTARG;;
         R) RELEASE=$OPTARG;;
+        S) case $OPTARG in
+               R) skip_branching_repositories=t ;;
+               S) skip_branching_services=t ;;
+           esac
+           ;;
         h) usage; exit 0;;
         ?|*) usage; exit 1;;
     esac
@@ -80,44 +87,45 @@ osc copyprj --prjconf \
     --with-history --now \
     "$obs_project" "$target_obs_project:$RELEASE"
 
-tmp_prj_conf=$(mktemp)
-for signal in TERM HUP QUIT EXIT; do
+if [ $skip_branching_repositories ] ; then
+    OSC_PRJ=$target_obs_project:$RELEASE osc_parse_env
+
+    tmp_prj_conf=$(mktemp)
+    for signal in TERM HUP QUIT EXIT; do
+        # shellcheck disable=2064
+        # note: $tmp_prj_conf is the same when the trap is set or executed
+        # the warning is irelevant.
+        trap "rm -rf $tmp_prj_conf; exit 1" $signal
+    done
+    unset signal
     # shellcheck disable=2064
     # note: $tmp_prj_conf is the same when the trap is set or executed
     # the warning is irelevant.
-    trap "rm -rf $tmp_prj_conf; exit 1" $signal
-done
-unset signal
-# shellcheck disable=2064
-# note: $tmp_prj_conf is the same when the trap is set or executed
-# the warning is irelevant.
-trap "rm -rf $tmp_prj_conf; exit 130" INT
+    trap "rm -rf $tmp_prj_conf; exit 130" INT
 
+    osc meta prj $target_obs_project:$RELEASE > $tmp_prj_conf
+    change_repository_from_latest_to_release $tmp_prj_conf $RELEASE
 
-OSC_PRJ=$target_obs_project:$RELEASE osc_parse_env
+    osc meta prj $target_obs_project:$RELEASE --file="$tmp_prj_conf" --message "Branch from devel to testing:$RELEASE on $start_date"
 
-osc meta prj $target_obs_project:$RELEASE > $tmp_prj_conf
-change_repository_from_latest_to_release $tmp_prj_conf $RELEASE
+    rm -f $tmp_prj_conf
+fi
 
-osc meta prj $target_obs_project:$RELEASE --file="$tmp_prj_conf" --message "Branch from devel to testing:$RELEASE on $start_date"
+if [ $skip_branching_services ] ; then
+    obs_checkout_prj $target_obs_project:$RELEASE
+    cd $target_obs_project:$RELEASE
 
-rm -f $tmp_prj_conf
-
-
-
-obs_checkout_prj $target_obs_project:$RELEASE
-cd $target_obs_project:$RELEASE
-
-for dir in *;do
-    # Only check dirs which are an obs package
-    # Skip packages with no webhook
-    if [ -e "$dir/.osc/_package" ] && [ -e "$dir/_service" ]; then
-        (
-            cd "$dir"
-            webhook_change_branch \
-                _service  \
-                "upgrade-$(echo $RELEASE|cut --complement -d '.' -f4)" # we only want major.minor.patch version here
-            osc commit -m"Switch webhook to listen to $RELEASE branch"
-        )
-    fi
-done
+    for dir in *;do
+        # Only check dirs which are an obs package
+        # Skip packages with no webhook
+        if [ -e "$dir/.osc/_package" ] && [ -e "$dir/_service" ]; then
+            (
+                cd "$dir"
+                webhook_change_branch \
+                    _service  \
+                    "upgrade-$(echo $RELEASE|cut --complement -d '.' -f4)" # we only want major.minor.patch version here
+                osc commit -m"Switch webhook to listen to $RELEASE branch"
+            )
+        fi
+    done
+fi
