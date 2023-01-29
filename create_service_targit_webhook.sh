@@ -17,6 +17,8 @@ usage: create_targit_webhook_package.sh [options] packages
 options:
 -r      repository url
 -b      target branch
+-w      Create webhook service (default)
+-W      Don't create webhook service
 
 -P      OBS Project to upload to
 -p      OBS Package to create
@@ -28,36 +30,17 @@ options:
 EOF
 }
 
-create__service()
-{
-    file="$1"
-    shift
+webhook="--webhook"
 
-    cat > "$file" <<EOF
-<services>
-  <service name="webhook">
-  <param name="repourl">$repository</param>
-  <param name="branch">$branch</param>
-  </service>
-<service name="tar_git">
-  <param name="url">$repository</param>
-  <param name="branch">$branch</param>
-  <param name="revision"/>
-  <param name="token"/>
-  <param name="debian">N</param>
-  <param name="dumb">N</param>
-</service></services>
-EOF
-}
-
-
-while getopts hr:b:P:p:A: arg ; do
+while getopts hr:b:P:p:A:wW arg ; do
     case $arg in
         r) repository=$OPTARG;;
         b) branch=$OPTARG;;
         P) obs_project=$OPTARG;;
         p) obs_package=$OPTARG;;
         A) obs_api_url=$OPTARG;;
+        w) webhook="--webhook";;
+        W) webhook="";;
         h) usage; exit 0;;
         ?|*) usage; exit 1;;
     esac
@@ -80,8 +63,10 @@ osc mkpac "$obs_package"
 
 cd "$obs_package"
 
-create__service "_service"
-
+$scriptdir/osc_service_add.py --package "$obs_package" \
+                                --project "$obs_project" \
+                                --branch "$branch" \
+                                --repository "$repository" $webhook _service
 osc add _service
 
 osc commit -m"Added package"
