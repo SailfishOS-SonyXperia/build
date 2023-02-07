@@ -54,7 +54,7 @@ osc_parse_env()
 }
 
 osc_build() {
-
+    local obs_build_repository=latest_$adaptation_repo_arch obs_build_repository_arch=i586
     # Clean up old build.script package that could block building the spec file
     # besides running build.script
     rm -f build.script
@@ -62,19 +62,23 @@ osc_build() {
     mkdir -p $obs_cache_dir \
           $osc_build_cache_pkgs
 
-    if [ $# -eq 0 ] ; then
-        set -- latest_$adaptation_repo_arch i586
-    fi
+
+    while getopts r:c: arg ; do
+        case $arg in
+            r) obs_build_repository=$OPTARG;;
+            c) obs_build_repository_arch=$OPTARG;;
+        esac
+    done
 
     osc build --root=$obs_build_root --no-verify \
-        "${@}" \
+        $obs_build_repository $obs_build_repository_arch \
         -x p7zip -x bzip2 \
         --keep-pkgs="${obs_build_to_cache:-$PWD}" \
         --prefer-pkgs=$osc_build_cache_pkgs \
         --no-service \
         --trust-all-projects  \
         --ccache \
-        --clean "${osc_build_args[@]}"
+        --clean "${@}" "${osc_build_args[@]}"
 
     # In case we use ubu-chroot we need to unmount all mounts that were used so subsequent
     # run work fine.
