@@ -25,8 +25,10 @@ shift $(($OPTIND - 1))
 
 obs_default_opts="-A $obs_api_url"
 
-obs_checkout_prj_pkg $obs_project:dhd $obs_package
+# First checkout the lower level project to workaround
+# https://github.com/openSUSE/osc/issues/1255
 obs_checkout_prj_pkg $obs_project $obs_package
+obs_checkout_prj_pkg $obs_project:dhd $obs_package
 
 start_date="$(date -R)"
 
