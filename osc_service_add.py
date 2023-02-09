@@ -41,7 +41,7 @@ if args.webhook:
     webhook = ElementTree.SubElement(services, "service", name="webhook")
     webhook_params = dict()
     webhook_params['repourl'] = ElementTree.SubElement(webhook, "param",
-                                                       name = "repo_url")
+                                                       name = "repourl")
     webhook_params['repourl'].text = args.repository
     webhook_params['branch'] = ElementTree.SubElement(webhook, "param",
                                                       name = "branch")
