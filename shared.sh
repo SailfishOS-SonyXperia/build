@@ -50,7 +50,10 @@ osc_parse_env()
 
     # Detect the arch for the of the adaptation repo from device_rpm_architecture_string
     adaptation_repo_arch=$(osc meta prjconf ${OSC_PRJ} |grep device_rpm_architecture_string |
-                           cut -d ' ' -f2)
+                               cut -d ' ' -f2)
+
+    # Separate local package cache per device
+    osc_build_cache_pkgs=${osc_build_cache_pkgs}/${vendor}/${family}
 }
 
 osc_build() {
