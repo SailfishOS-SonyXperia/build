@@ -113,7 +113,7 @@ fi
 
 if [ $skip_branching_services ] ; then
     obs_checkout_prj $target_obs_project:$RELEASE
-    cd $target_obs_project:$RELEASE
+    obs_cd_project $target_obs_project:$RELEASE
 
     for dir in *;do
         # Only check dirs which are an obs package

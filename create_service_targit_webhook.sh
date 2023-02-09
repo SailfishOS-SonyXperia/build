@@ -49,11 +49,11 @@ done
 
 obs_default_opts="-A $obs_api_url"
 
-if [ ! -e "$obs_project" ] ; then
+if [ ! -e "$(obs_cd_project_path $obs_project)" ] ; then
     osc co "$obs_project"
 fi
 
-cd "$obs_project" || exit $?
+obs_cd_project "$obs_project" || exit $?
 
 if [  -e "$obs_package" ] ; then
     die "Package already exists"

@@ -34,7 +34,7 @@ shift $(($OPTIND - 1))
 
 obs_checkout_prj $obs_project
 
-pushd $obs_project
+pushd $(obs_cd_project_path $obs_project)
 
 osc_parse_env
 hadk_setup_tmp_unit

@@ -33,7 +33,7 @@ obs_checkout_prj_pkg $obs_project $obs_package
 
 start_date="$(date -R)"
 
-cd "$obs_project"/"$obs_package" || exit $?
+obs_cd_project "$obs_project"/"$obs_package" || exit $?
 
 osc service run tar_git
 osc_parse_env

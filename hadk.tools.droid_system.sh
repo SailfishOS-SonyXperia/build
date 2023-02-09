@@ -23,9 +23,11 @@ shift $(($OPTIND - 1))
 
 obs_checkout_prj $obs_project
 
+pushd $(obs_cd_project_path $obs_project)
+
 osc_parse_env
+hadk_setup_tmp_unit
 osc_hadk_setup_supported_devices
 
-hadk_setup_tmp_unit
 
 hadk.build -t "$hadk_tools_templates_dir:$scriptdir" -f "$tmp_dir/$TARGET_UNIT.wrapper.hadk"

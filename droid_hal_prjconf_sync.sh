@@ -52,7 +52,7 @@ CONFDIR=prjconf
 SUBMODULE=droid-hal-prjconf
 SRC_GENERIC=$SUBMODULE/$CONFDIR
 SRC_SPECIFIC=$CONFDIR
-DEST=$obs_project/prjconf_upload.xml
+DEST=$(obs_cd_project_path $obs_project)/prjconf_upload.xml
 
 
 if grep -q "^Macros:" $SRC_GENERIC/prjconf.xml $SRC_SPECIFIC/prjconf.xml; then
@@ -83,7 +83,7 @@ fi
 
 pkg_ver=$(git describe --tags)
 
-cd "$obs_project" || exit 1
+obs_cd_project "$obs_project" || exit 1
 osc meta prjconf --file="$DEST" --message "Update to $pkg_ver on $start_date"
 
 rm "$DEST"

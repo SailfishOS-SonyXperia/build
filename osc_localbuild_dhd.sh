@@ -33,14 +33,21 @@ obs_checkout_prj_pkg $obs_project:dhd $obs_package
 start_date="$(date -R)"
 
 
-pushd "$obs_project:dhd"/"$obs_package" || exit $?
+obs_cd_project "$obs_project:dhd"/"$obs_package" || exit $?
+
+# Workaround for left over directory being there
+rm -rf android .old
+
 osc service run tar_git
 osc_parse_env
 popd
 
-should_build "$obs_project/$obs_package" \
-             "$obs_project:dhd/$obs_package/_service:tar_git:$obs_package.spec" \
-             "$obs_project:dhd/droid-src-$vendor-$family/droid-src-$vendor-$family.spec"
+obs_project_slash=$(realpath $(obs_cd_project_path "$obs_project"))
+obs_project_slash_dhd=$(realpath "$(obs_cd_project_path "$obs_project" dhd)")
+
+should_build "$obs_project_slash/$obs_package" \
+ "$obs_project_slash_dhd/$obs_package/_service:tar_git:$obs_package.spec" \
+ "$obs_project_slash_dhd/droid-src-$vendor-$family/_service:tar_git:droid-src-$vendor-$family.spec"
 
 if [ $should_build -eq 1 ] ; then
     exit 0
@@ -48,7 +55,7 @@ fi
 
 # droid_src was updated but not droid-hal bump release
 if [ $should_build -eq 2 ] ; then
-    osc_build_args+=(  --release=$(($(parse_spec_stat "$obs_project:dhd/$obs_package/_service:tar_git:$obs_package.spec" "Release"|head -n1) + 1 )) )
+    osc_build_args+=(  --release=$(($(parse_spec_stat "$obs_project_slash_dhd/$obs_package/_service:tar_git:$obs_package.spec" "Release"|head -n1) + 1 )) )
 fi
 
 (
@@ -63,7 +70,7 @@ fi
 cd $obs_project/$obs_package || exit 1
 
 
-for rpm in "../../$obs_project:dhd/$obs_package/"*.rpm ; do
+for rpm in "$obs_project_slash_dhd/$obs_package/"*.rpm ; do
     case $rpm in
         *.src.rpm) : ;; # Ignore source packages
         *)  mv "$rpm" .
@@ -79,7 +86,7 @@ write_pkg_meta .
 osc add pkg_meta
 
 gen_build_script_stub_spec
-osc add $pkg.spec
+osc add $pkg
 
 osc \
     commit \

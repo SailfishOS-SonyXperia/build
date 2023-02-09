@@ -95,14 +95,31 @@ osc_build() {
     fi
 }
 
+obs_cd_project_path() {
+    local obs_project_slash="$1" obs_project_path_separator=":"
+    if osc config --dump|grep checkout_no_colon > /dev/null ; then
+        obs_project_slash=$(echo "$1" | sed 's|:|/|g')
+        obs_project_path_separator="/"
+    fi
+    echo "$obs_project_slash"${2+${obs_project_path_separator}${2}}
+}
+
+
+obs_cd_project(){
+    # Don't use grep -q here or osc will complain: BrokenPipeError: [Errno 32] Broken pipe
+    local obs_project_slash="$(obs_cd_project_path "$1")"
+    pushd "$obs_project_slash"
+}
+
 obs_checkout_prj() {
     local obs_project="$1"
 
-    if [ ! -d "$obs_project" ] ; then
+    if [ ! -d $(obs_cd_project_path "$1") ] || \
+           [ ! -d $(obs_cd_project_path "$1")/.osc ] ; then
         osc co "$obs_project"
     else
         (
-            cd "$obs_project" || exit $?
+            obs_cd_project $(obs_cd_project_path "$1") || exit $?
             osc up
         )
     fi
@@ -114,12 +131,12 @@ obs_checkout_prj_pkg() {
 
     (
         obs_checkout_prj "$obs_project"
-        cd "$obs_project" || exit $?
+        obs_cd_project "$obs_project" || exit $?
 
         if [ ! -e "$obs_package" ] ; then
             osc co "$obs_package"
         else
-            cd "$obs_package" || exit $?
+            pushd  "$obs_package" || exit $?
             osc up
         fi
     )

@@ -27,11 +27,13 @@ obs_checkout_prj $obs_project:dhd
 
 OSC_PRJ=$obs_project osc_parse_env
 
-cd "$obs_project:dhd/droid-src-$vendor-$family" || exit 1
+obs_cd_project "$obs_project:dhd/droid-src-$vendor-$family" || exit 1
 
 # Workaround for left over directory being there
 rm -rf android .old
 
 osc service run tar_git
 
-osc_build "$@"
+# Pass specific droid-src package name since the repository might contain
+# spec files for other devices.
+osc_build "$@" "_service:tar_git:droid-src-$vendor-$family.spec"
