@@ -12,7 +12,7 @@ EOF
 }
 
 hadk_setup_tmp_unit() {
-    tmp_dir=$(mktemp -d)
+    tmp_dir=$(mktemp -d -p ${XDG_CACHE_HOME:-$HOME/.cache})
     for signal in TERM HUP QUIT; do
         # shellcheck disable=2064
         # note: $tmp_dir is the same when the trap is set or executed
