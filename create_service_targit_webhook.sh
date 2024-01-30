@@ -49,9 +49,7 @@ done
 
 obs_default_opts="-A $obs_api_url"
 
-if [ ! -e "$(obs_cd_project_path $obs_project)" ] ; then
-    osc co "$obs_project"
-fi
+obs_checkout_prj "$obs_project"
 
 obs_cd_project "$obs_project" || exit $?
 
