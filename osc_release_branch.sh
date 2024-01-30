@@ -7,7 +7,7 @@ scriptdir="$(dirname -- "$( readlink -f -- "$0"; )")"
 
 webhook_change_branch() {
     # Change branch in webhook service in obs _service file
-    python -c"from xml.etree import ElementTree
+    python3 -c"from xml.etree import ElementTree
 xmlFile = ElementTree.parse('$1')
 root = xmlFile.getroot()
 for service in root.findall('.//service'):
@@ -21,7 +21,7 @@ xmlFile.write('$1')
 
 change_repository_from_latest_to_release() {
     # Change repostory from :latest to :$RELEASE
-    python -c"from xml.etree import ElementTree
+    python3 -c"from xml.etree import ElementTree
 xmlFile = ElementTree.parse('$1')
 root = xmlFile.getroot()
 for service in root.findall('.//repository'):
