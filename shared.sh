@@ -2,7 +2,7 @@
 # Default directories
 # Override at least obs_build_rootdir if needed
 
-obs_api_url="https://build.merproject.org"
+obs_api_url="https://build.sailfishos.org"
 osc_opts=()
 
 obs_build_rootdir=/srv/build/buildservice
