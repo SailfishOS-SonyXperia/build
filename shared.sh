@@ -302,3 +302,7 @@ should_build()
 if [ -e "$scriptdir"/env.sh ] ; then
     . "$scriptdir"/env.sh
 fi
+
+# Local Variables:
+# sh-shell: bash
+# End:

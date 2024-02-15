@@ -57,3 +57,7 @@ EOF
 
 EOF
 }
+
+# Local Variables:
+# sh-shell: bash
+# End:
