@@ -200,7 +200,7 @@ EOF
 }
 
 gen_build_script_stub_spec() {
-cat > $pkg.spec <<EOF
+cat > $obs_package.spec <<EOF
 Summary:    $pkg upload package
 License:    BSD-3-Clause
 Name:       $pkg

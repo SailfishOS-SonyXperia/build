@@ -85,7 +85,7 @@ write_pkg_meta .
 osc add pkg_meta
 
 gen_build_script_stub_spec
-osc add $pkg
+osc add $obs_package.spec
 
 osc \
     commit \
