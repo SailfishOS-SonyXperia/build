@@ -9,10 +9,6 @@ scriptdir="$(dirname -- "$( readlink -f -- "$0"; )")"
 
 usage_description="Fetch device family we build for from obs_project and build droid-src"
 
-# Keep droid-src packages directly in build cache so we don't have to
-# move them around after
-obs_build_to_cache="${osc_build_cache_pkgs}"
-
 while getopts hr:b:P:p:A:t: arg ; do
     case $arg in
         P) obs_project=$OPTARG;;
@@ -26,6 +22,9 @@ shift $(($OPTIND - 1))
 obs_checkout_prj $obs_project:dhd
 
 OSC_PRJ=$obs_project osc_parse_env
+# Keep droid-src packages directly in build cache so we don't have to
+# move them around after
+obs_build_to_cache="${osc_build_cache_pkgs}"
 
 obs_cd_project "$obs_project:dhd/droid-src-$vendor-$family" || exit 1
 
