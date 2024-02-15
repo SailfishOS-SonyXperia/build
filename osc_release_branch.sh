@@ -87,7 +87,7 @@ osc copyprj --prjconf \
     --with-history --now \
     "$obs_project" "$target_obs_project:$RELEASE"
 
-if [ $skip_branching_repositories ] ; then
+if [ -z $skip_branching_repositories ] ; then
     OSC_PRJ=$target_obs_project:$RELEASE osc_parse_env
 
     tmp_prj_conf=$(mktemp)
@@ -111,7 +111,7 @@ if [ $skip_branching_repositories ] ; then
     rm -f $tmp_prj_conf
 fi
 
-if [ $skip_branching_services ] ; then
+if [ -z $skip_branching_services ] ; then
     obs_checkout_prj $target_obs_project:$RELEASE
     obs_cd_project $target_obs_project:$RELEASE
 
