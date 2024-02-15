@@ -59,15 +59,14 @@ if [ $should_build -eq 2 ] ; then
 fi
 
 (
-    cd "$obs_project:dhd"/"$obs_package" || exit $?
+    obs_cd_project "$obs_project:dhd"/"$obs_package" || exit $?
     osc_build "$@"
 )
 
 
 
 
-
-cd $obs_project/$obs_package || exit 1
+obs_cd_project $obs_project/$obs_package || exit 1
 
 
 for rpm in "$obs_project_slash_dhd/$obs_package/"*.rpm ; do
