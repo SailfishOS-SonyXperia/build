@@ -206,6 +206,18 @@ Attach /Changelog.md/ after you are done.
 
   If everything is alright continue with the next step.
 
+* Aggregate release to release repository
+  :PROPERTIES:
+  :CREATED:  [2024-02-21 Wed 00:14]
+  :END:
+
+  After testing the new release and building images it is finally time to aggregate the new
+  release so that existing others can upgrade.
+
+  Execute the aggregate script like this:
+  #+begin_src sh
+  ./osc_aggregate_release_package.py -R <release_project> -C <release_config_project>
+  #+end_src
 
 * Publish
   :PROPERTIES:
