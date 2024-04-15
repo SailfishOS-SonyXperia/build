@@ -33,6 +33,10 @@ for service in root.findall('.//repository'):
                     # their naming scheme differs between devel and testing :/
                     if 'sailfish_latest_${adaptation_repo_arch}' in key.attrib['repository']:
                         key.attrib['repository'] = 'sailfishos_${2}_${adaptation_repo_arch}'
+                    # Guess repository arch from name
+                    if key.attrib['repository'].startswith('sailfish_latest_'):
+                        suffix = key.attrib['repository'].removeprefix('sailfish_latest_')
+                        key.attrib['repostory'] = 'sailfishos_${2}_' + suffix
                     # Switch hw-common from devel to testing
                     if 'nemo:devel:hw:common' in key.attrib['project']:
                         key.attrib['project'] = 'nemo:testing:hw:common'
@@ -56,6 +60,8 @@ options:
 -S <R,S> Skip (R)epository branching or (S)ervice branching
          Can be passed multiple times.
 
+-D       Skip parsing project configurtion
+
 -A       API url to the target obs, defaults to $obs_api_url
 
 -h       Show this help
@@ -64,7 +70,7 @@ EOF
 }
 
 
-while getopts hr:b:P:p:A:t:R:T:S: arg ; do
+while getopts hr:b:P:p:A:t:R:T:S:D arg ; do
     case $arg in
         P) obs_project=$OPTARG;;
         T) target_obs_project=$OPTARG;;
@@ -75,6 +81,7 @@ while getopts hr:b:P:p:A:t:R:T:S: arg ; do
                S) skip_branching_services=t ;;
            esac
            ;;
+        D) skip_project_device_config=t;;
         h) usage; exit 0;;
         ?|*) usage; exit 1;;
     esac
@@ -88,7 +95,9 @@ osc copyprj --prjconf \
     "$obs_project" "$target_obs_project:$RELEASE"
 
 if [ -z $skip_branching_repositories ] ; then
-    OSC_PRJ=$target_obs_project:$RELEASE osc_parse_env
+    if [ ! $skip_project_device_config ] ; then
+        OSC_PRJ=$target_obs_project:$RELEASE osc_parse_env
+    fi
 
     tmp_prj_conf=$(mktemp)
     for signal in TERM HUP QUIT EXIT; do
