@@ -57,6 +57,8 @@ options:
 -P       OBS source project
 -T       OBS target project to branch to
 -R       Target release, should given as major.minor.patch.revision
+         Can be given as release:target_release to manually secify
+         the right target release in case the exact version doesn\'t exist.
 -S <R,S> Skip (R)epository branching or (S)ervice branching
          Can be passed multiple times.
 
@@ -90,6 +92,12 @@ shift $(($OPTIND - 1))
 
 start_date="$(date -R)"
 
+
+target_release=$(echo $RELEASE |cut -d ':' -f2)
+if [ $target_release ] ; then
+    RELEASE=$(echo $RELEASE |cut -d ':' -f1)
+fi
+
 osc copyprj --prjconf \
     --with-history --now \
     "$obs_project" "$target_obs_project:$RELEASE"
@@ -113,7 +121,7 @@ if [ -z $skip_branching_repositories ] ; then
     trap "rm -rf $tmp_prj_conf; exit 130" INT
 
     osc meta prj $target_obs_project:$RELEASE > $tmp_prj_conf
-    change_repository_from_latest_to_release $tmp_prj_conf $RELEASE
+    change_repository_from_latest_to_release $tmp_prj_conf ${target_release:-$RELEASE}
 
     osc meta prj $target_obs_project:$RELEASE --file="$tmp_prj_conf" --message "Branch from devel to testing:$RELEASE on $start_date"
 
