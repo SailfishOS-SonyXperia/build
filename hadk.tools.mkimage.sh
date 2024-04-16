@@ -12,10 +12,22 @@ TARGET_UNIT=mk.image.hadk
 
 usage_options() {
     cat <<EOF
--S      Obs project that contains SSu config
--E      Extra packages to install such as additional features
+-S      Obs project that contains SSu config, can be supplied multiple times
+-E      Extra packages to install such as additional features, can be supplied multiple times
 -D      Build only for device
 EOF
+}
+
+append_var() {
+    local sep=$sep
+    if [ -z "$sep" ] ; then
+        sep=" "
+    fi
+    if $(eval [ -z \"\$$1\" ])  ; then
+        eval "$1=\"$2\""
+    else
+        eval "$1=\"\$$1${sep}\"$2\"\""
+    fi
 }
 
 while getopts hr:b:P:p:A:t:S:E:D: arg ; do
@@ -23,8 +35,15 @@ while getopts hr:b:P:p:A:t:S:E:D: arg ; do
         P) obs_project=$OPTARG;;
         A) obs_api_url=$OPTARG;;
         t) hadk_tools_templates_dir=$OPTARG;;
-        S) ssu_config_project=$OPTARG;;
-        E) extra_packages=$OPTARG;;
+        S)
+            repo=$(osc_repo_baseurl "$OPTARG")
+            if [ -z $repo ] ;then
+                exit 1
+            fi
+            extra_repos+="repo --name=addon-repo-$RANDOM --baseurl=$repo
+"
+           ;;
+        E) extra_packages+=" $OPTARG";;
         D) single_device=$OPTARG;;
         h) usage; exit 0;;
         ?|*) usage; exit 1;;
@@ -40,18 +59,15 @@ osc_parse_env
 hadk_setup_tmp_unit
 osc_hadk_setup_supported_devices ${single_device}
 
-ssu_config_project_url=$(osc_repo_baseurl "$ssu_config_project")
 # Tell the mk.image to use our adaptation repository
 # instead of trying to use a local repository
 echo SFOS_ADAPTION0_URL=$(osc_repo_baseurl "$obs_project") >> $tmp_dir/$vendor.$family.devices.hadk
 cat >> $tmp_dir/$vendor.$family.devices.hadk <<EOF
 SRCKS_DIR=/parentroot$tmp_dir/usr/share/kickstarts
 KS_INSERT_EXTRA_PACKAGES="${extra_packages}"
-KS_INSERT_EXTRA_REPOS="repo --name=ssu-config --baseurl=${ssu_config_project_url}"
+KS_INSERT_EXTRA_REPOS="${extra_repos}"
 EOF
 popd
-
-
 
 
 # Fetch droid-config-ssu-kickstarts here
