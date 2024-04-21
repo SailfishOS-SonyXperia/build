@@ -39,7 +39,8 @@ for service in root.findall('.//repository'):
                         key.attrib['repostory'] = 'sailfishos_${2}_' + suffix
                     # Switch repo in nemo from devel to testing
                     # Not sure if other cases outside of nemo should be handled too
-                    if key.attrib['project'].startswith('nemo:devel'):
+                    if key.attrib['project'].startswith('nemo:devel') and not key.attrib['project'].endswith(':dhd') and \
+                       not key.attrib['project'] == 'nemo:devel:hw:sony:kumano:hwcommon_workaround':
                         key.attrib['project'] = key.attrib['project'].replace('nemo:devel', 'nemo:testing')
 xmlFile.write('$1')"
 }
