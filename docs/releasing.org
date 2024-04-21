@@ -154,6 +154,10 @@
   # https://developer.sony.com/file/download/software-binaries-for-aosp-android-10-0-kernel-4-14-kumano-latest
   {{{OEM_BINARIES_LINK}}}
 
+  ,* Updating your device
+
+  To update your device please follow the update instructions in INSTALL.org:
+  [[https://github.com/SailfishOS-SonyXperia/bugs/blob/master/INSTALL.org#updating-your-device][INSTALL.org/Updating your device]]
 
   ,* Known issues
 
