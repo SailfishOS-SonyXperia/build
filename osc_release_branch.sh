@@ -37,9 +37,10 @@ for service in root.findall('.//repository'):
                     if key.attrib['repository'].startswith('sailfish_latest_'):
                         suffix = key.attrib['repository'].removeprefix('sailfish_latest_')
                         key.attrib['repostory'] = 'sailfishos_${2}_' + suffix
-                    # Switch hw-common from devel to testing
-                    if 'nemo:devel:hw:common' in key.attrib['project']:
-                        key.attrib['project'] = 'nemo:testing:hw:common'
+                    # Switch repo in nemo from devel to testing
+                    # Not sure if other cases outside of nemo should be handled too
+                    if key.attrib['project'].startswith('nemo:devel'):
+                        key.attrib['project'] = key.attrib['project'].replace('nemo:devel', 'nemo:testing')
 xmlFile.write('$1')"
 }
 
