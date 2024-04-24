@@ -233,6 +233,9 @@ Attach /Changelog.md/ after you are done.
   Update each post you publish on with the brief intro to this release,
   update the known issues and adjust any other links if necessary.
 
+  Make sure to save the contents of the first forum post which contains
+  the release notes in the /release_notes/ folder which archives them ([[https://github.com/SailfishOS-SonyXperia/bugs/issues/95][SailfishOS-SonyXperia/bugs#95]]).
+
   Change the title of the post to match the current release.
 
   If everything is done, publish the draft release and spread the news.
